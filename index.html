@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공주의 시험 응원판</title>
+<meta name="description" content="공주야, 오늘도 한 칸 채워 볼까? 엄마가 응원해!">
+<meta property="og:title" content="공주의 시험 응원판 💪">
+<meta property="og:description" content="남은 시험 일정이랑 엄마의 오늘 한마디 보러 가자!">
+<meta name="theme-color" content="#ff6b8b">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff7ec;
+    --card: #ffffff;
+    --ink: #3b2a45;
+    --soft: #8a7a93;
+    --pink: #ff6b8b;
+    --pink-soft: #ffe1e8;
+    --sun: #ffc93c;
+    --sun-soft: #fff1c7;
+    --mint: #3cc9a5;
+    --mint-soft: #d8f6ec;
+    --sky: #5aa9ff;
+    --line: #f1e4d6;
+    --radius: 22px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 12% 8%, var(--sun-soft) 0 90px, transparent 91px),
+      radial-gradient(circle at 92% 22%, var(--pink-soft) 0 70px, transparent 71px);
+    background-repeat: no-repeat;
+    color: var(--ink);
+    font-family: "Gowun Dodum", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1, h2, .jua { font-family: "Jua", "Gowun Dodum", sans-serif; font-weight: 400; }
+  h2 { font-size: 20px; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+
+  .hello { text-align: center; padding: 8px 0 20px; }
+  .hello .crown { font-size: 40px; display: inline-block; animation: bob 2.4s ease-in-out infinite; }
+  .hello h1 { font-size: 26px; margin: 6px 0 0; }
+  @keyframes bob { 50% { transform: translateY(-6px) rotate(-6deg); } }
+
+  .dday {
+    background: var(--pink);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    text-align: center;
+    box-shadow: 0 8px 0 #e44f71;
+    margin-bottom: 26px;
+  }
+  .dday .big { font-family: "Jua", sans-serif; font-size: 56px; line-height: 1; letter-spacing: 1px; }
+  .dday .sub { margin-top: 8px; font-size: 17px; }
+
+  .card {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+
+  .note {
+    background: var(--sun-soft);
+    border: 2px dashed var(--sun);
+    position: relative;
+  }
+  .note .msg { font-family: "Jua", sans-serif; font-size: 21px; line-height: 1.5; margin: 0; word-break: keep-all; }
+  .note .from { text-align: right; color: var(--soft); margin: 10px 0 0; }
+
+  .exams { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .exam {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px; border-radius: 16px;
+    background: var(--mint-soft);
+  }
+  .exam .date { font-family: "Jua", sans-serif; font-size: 18px; min-width: 76px; }
+  .exam .subj { flex: 1; font-size: 17px; }
+  .exam .tag { font-family: "Jua", sans-serif; font-size: 14px; padding: 3px 10px; border-radius: 999px; background: #fff; white-space: nowrap; }
+  .exam.today { background: var(--pink-soft); outline: 3px solid var(--pink); }
+  .exam.past { opacity: .45; }
+  .exam.past .subj { text-decoration: line-through; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
+  .chip {
+    font: inherit; font-size: 16px;
+    padding: 9px 16px; border-radius: 999px;
+    border: 2px solid var(--line); background: #fff; color: var(--ink);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .chip[aria-pressed="true"] { background: var(--sky); border-color: var(--sky); color: #fff; }
+  label.lbl { display: block; font-family: "Jua", sans-serif; font-size: 16px; margin-bottom: 6px; }
+  .mood {
+    width: 100%; font: inherit; font-size: 18px;
+    padding: 12px 14px; border-radius: 14px;
+    border: 2px solid var(--line); background: #fff; color: var(--ink);
+  }
+  .mood:focus, .chip:focus-visible, .go:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+  .go {
+    width: 100%; margin-top: 16px;
+    font-family: "Jua", sans-serif; font-size: 20px;
+    padding: 14px; border: 0; border-radius: 16px;
+    background: var(--mint); color: #fff;
+    box-shadow: 0 5px 0 #2aa686; cursor: pointer;
+  }
+  .go:active { transform: translateY(3px); box-shadow: 0 2px 0 #2aa686; }
+  .hint { color: var(--soft); font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
+  .hint.ok { color: var(--mint); font-family: "Jua", sans-serif; font-size: 16px; }
+  .hint.err { color: var(--pink); }
+
+  .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
+  .slot {
+    aspect-ratio: 1; border-radius: 14px;
+    border: 2px dashed var(--line);
+    display: grid; place-items: center; font-size: 28px;
+  }
+  .slot.on { border: 0; background: var(--sun-soft); }
+  .slot.pop { animation: pop .5s ease; }
+  @keyframes pop { 0% { transform: scale(.2); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .count { font-family: "Jua", sans-serif; text-align: center; margin: 0 0 12px; }
+  .logs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .logs li { padding: 10px 12px; border-radius: 12px; background: var(--bg); font-size: 15px; }
+  .logs b { font-family: "Jua", sans-serif; font-weight: 400; margin-right: 6px; }
+  .empty { color: var(--soft); text-align: center; margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hello">
+    <span class="crown" aria-hidden="true">👑</span>
+    <h1 id="hello">공주야, 오늘도 한 칸 채워 볼까?</h1>
+  </header>
+
+  <section class="dday" aria-live="polite">
+    <div class="big" id="ddayBig">D-?</div>
+    <div class="sub" id="ddaySub"></div>
+  </section>
+
+  <section class="card note">
+    <h2>💌 엄마의 오늘 한마디</h2>
+    <p class="msg" id="msg"></p>
+    <p class="from">— 엄마가</p>
+  </section>
+
+  <section class="card">
+    <h2>📅 남은 시험 일정</h2>
+    <ul class="exams" id="exams"></ul>
+  </section>
+
+  <section class="card">
+    <h2>✏️ 오늘 기록 남기기</h2>
+    <form id="form" autocomplete="off">
+      <span class="lbl" id="subjLbl">오늘 공부한 과목 (여러 개 골라도 돼)</span>
+      <div class="chips" id="chips" role="group" aria-labelledby="subjLbl"></div>
+      <label class="lbl" for="mood">오늘 기분 한 단어</label>
+      <input class="mood" id="mood" maxlength="10" placeholder="예: 뿌듯, 졸려, 할만해">
+      <button class="go" type="submit">오늘 기록 남기기 ✨</button>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>🌟 칭찬 스티커판</h2>
+    <p class="count" id="count"></p>
+    <div class="board" id="board"></div>
+    <ul class="logs" id="logs"></ul>
+  </section>
+
+</main>
+
+<script>
+  // ===== 엄마가 바꾸는 곳 =====
+  const NICKNAME = "공주";
+  const MESSAGE = "공주야, 지금까지 열심히 한 거 엄마가 다 알아. 오늘도 너답게 하면 돼. 화이팅!";
+  const EXAMS = [
+    { date: "2026-10-27", subjects: ["국어", "사회"] },
+    { date: "2026-10-28", subjects: ["수학", "역사"] },
+    { date: "2026-10-29", subjects: ["영어", "과학"] },
+  ];
+  // ============================
+
+  const STORE_KEY = "exam-cheer-logs";
+  const STICKERS = ["⭐", "🌈", "🍓", "🐰", "🌻", "🦄", "🍀", "🎀", "🐥", "💖"];
+  const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
+  const $ = (id) => document.getElementById(id);
+
+  function ymd(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function parse(s) { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); }
+  function label(s) { const d = parse(s); return (d.getMonth() + 1) + "/" + d.getDate() + "(" + DAYS[d.getDay()] + ")"; }
+  function daysBetween(a, b) { return Math.round((parse(b) - parse(a)) / 86400000); }
+
+  const today = ymd(new Date());
+
+  // 엄마 한마디
+  $("msg").textContent = MESSAGE;
+  $("hello").textContent = NICKNAME + "야, 오늘도 한 칸 채워 볼까?";
+
+  // D-day
+  const next = EXAMS.find((e) => e.date >= today);
+  if (!next) {
+    $("ddayBig").textContent = "시험 끝! 🎉";
+    $("ddaySub").textContent = NICKNAME + "야, 정말 수고 많았어. 오늘은 푹 쉬자!";
+  } else {
+    const n = daysBetween(today, next.date);
+    if (n === 0) {
+      $("ddayBig").textContent = "D-DAY";
+      $("ddaySub").textContent = "오늘은 " + next.subjects.join("·") + " 시험! 할 수 있어 💪";
+    } else {
+      $("ddayBig").textContent = "D-" + n;
+      $("ddaySub").textContent = label(next.date) + " " + next.subjects.join("·") + " 시험까지";
+    }
+  }
+
+  // 시험 일정
+  $("exams").innerHTML = "";
+  EXAMS.forEach((e) => {
+    const li = document.createElement("li");
+    const n = daysBetween(today, e.date);
+    li.className = "exam" + (n < 0 ? " past" : n === 0 ? " today" : "");
+    li.innerHTML = '<span class="date"></span><span class="subj"></span><span class="tag"></span>';
+    li.querySelector(".date").textContent = label(e.date);
+    li.querySelector(".subj").textContent = e.subjects.join(", ");
+    li.querySelector(".tag").textContent = n < 0 ? "끝! 👏" : n === 0 ? "오늘" : "D-" + n;
+    $("exams").appendChild(li);
+  });
+
+  // 기록 (이 폰 안에만 저장)
+  function loadLogs() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function saveLogs(logs) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(logs)); return true; } catch (e) { return false; }
+  }
+  function stickerFor(date) {
+    let h = 0;
+    for (const c of date) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return STICKERS[h % STICKERS.length];
+  }
+
+  const allSubjects = [...new Set(EXAMS.flatMap((e) => e.subjects))];
+  allSubjects.forEach((s) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.textContent = s;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"));
+    $("chips").appendChild(b);
+  });
+
+  function fillToday() {
+    const t = loadLogs()[today];
+    if (!t) return;
+    $("mood").value = t.mood;
+    document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", t.subjects.includes(c.textContent) ? "true" : "false"));
+    $("hint").className = "hint ok";
+    $("hint").textContent = "오늘 기록 완료! 바꾸고 싶으면 고치고 다시 눌러도 돼.";
+  }
+
+  function renderBoard(popDate) {
+    const logs = loadLogs();
+    const dates = Object.keys(logs).sort();
+    const slots = Math.max(10, Math.ceil(dates.length / 5) * 5);
+    $("count").textContent = dates.length ? "지금까지 스티커 " + dates.length + "개! 🎉" : "기록하면 스티커가 하나씩 붙어!";
+    $("board").innerHTML = "";
+    for (let i = 0; i < slots; i++) {
+      const d = dates[i];
+      const el = document.createElement("div");
+      el.className = "slot" + (d ? " on" : "") + (d && d === popDate ? " pop" : "");
+      el.textContent = d ? stickerFor(d) : "";
+      if (d) el.title = label(d);
+      $("board").appendChild(el);
+    }
+    $("logs").innerHTML = "";
+    if (!dates.length) {
+      const p = document.createElement("li");
+      p.className = "empty";
+      p.textContent = "아직 기록이 없어. 오늘 첫 스티커를 붙여 보자!";
+      $("logs").appendChild(p);
+      return;
+    }
+    dates.slice().reverse().forEach((d) => {
+      const li = document.createElement("li");
+      const b = document.createElement("b");
+      b.textContent = stickerFor(d) + " " + label(d);
+      li.appendChild(b);
+      li.appendChild(document.createTextNode(logs[d].subjects.join(", ") + " · 기분 “" + logs[d].mood + "”"));
+      $("logs").appendChild(li);
+    });
+  }
+
+  $("form").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const subjects = [...document.querySelectorAll('.chip[aria-pressed="true"]')].map((c) => c.textContent);
+    const mood = $("mood").value.trim();
+    const hint = $("hint");
+    if (!subjects.length) { hint.className = "hint err"; hint.textContent = "공부한 과목을 하나 이상 골라 줘!"; return; }
+    if (!mood) { hint.className = "hint err"; hint.textContent = "기분을 한 단어로 적어 줘!"; $("mood").focus(); return; }
+    const logs = loadLogs();
+    const isNew = !logs[today];
+    logs[today] = { subjects, mood };
+    if (!saveLogs(logs)) { hint.className = "hint err"; hint.textContent = "이 브라우저에서는 저장이 안 돼. 다른 브라우저로 열어 줄래?"; return; }
+    hint.className = "hint ok";
+    hint.textContent = isNew ? "잘했어 " + NICKNAME + "야! 스티커 하나 붙였어 " + stickerFor(today) : "오늘 기록을 고쳤어!";
+    renderBoard(isNew ? today : null);
+  });
+
+  fillToday();
+  renderBoard();
+</script>
+</body>
+</html>
