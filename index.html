@@ -253,6 +253,14 @@
   function saveLogs(logs) {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(logs)); return true; } catch (e) { return false; }
   }
+  // 엄마용: 주소 끝에 ?reset 을 붙여 열면 이 기기에 저장된 기록을 지운다
+  if (new URLSearchParams(location.search).has("reset")) {
+    if (confirm("이 기기에 저장된 기록과 스티커를 모두 지울까요?")) {
+      try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    }
+    history.replaceState(null, "", location.pathname);
+  }
+
   function stickerFor(i) { return STICKERS[(i * 7) % STICKERS.length]; }
   function nowTime() { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
 
