@@ -115,6 +115,8 @@
     box-shadow: 0 5px 0 #2aa686; cursor: pointer;
   }
   .go:active { transform: translateY(3px); box-shadow: 0 2px 0 #2aa686; }
+  .go:disabled { background: #b9e9db; box-shadow: none; transform: none; cursor: default; }
+  .chip:disabled, .mood:disabled { opacity: .75; cursor: default; }
   .hint { color: var(--soft); font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
   .hint.ok { color: var(--mint); font-family: "Jua", sans-serif; font-size: 16px; }
   .hint.err { color: var(--pink); }
@@ -184,6 +186,9 @@
 <script>
   // ===== 엄마가 바꾸는 곳 =====
   const NICKNAME = "공주";
+  // 날짜별 한마디: 그날이 되면 그날 문장이 나오고, 적어 두지 않은 날에는 MESSAGE 가 나온다
+  const MESSAGES = {
+  };
   const MESSAGE = "우리 공주! 공주가 얼마나 애쓰는지 엄마가 다 알고 있어. 다른 사람은 몰라도 엄마는 다 알고 있지. 넌 진짜 멋진 아이이고, 네 삶의 주인공이야. 마지막 시험, 최선을 다해서 끝까지 잘 마무리 하렴.";
   const EXAMS = [
     { date: "2026-10-27", subjects: ["국어", "사회"] },
@@ -207,7 +212,7 @@
   const today = ymd(new Date());
 
   // 엄마 한마디
-  $("msg").textContent = MESSAGE;
+  $("msg").textContent = MESSAGES[today] || MESSAGE;
   $("hello").textContent = NICKNAME + "야, 오늘도 한 칸 채워 볼까?";
 
   // D-day
@@ -239,7 +244,7 @@
     $("exams").appendChild(li);
   });
 
-  // 기록 (이 폰 안에만 저장) — 기록할 때마다 스티커 하나
+  // 기록 (이 폰 안에만 저장) — 하루 한 번, 기록하면 스티커 하나
   function loadLogs() {
     let data;
     try { data = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { data = null; }
@@ -275,18 +280,25 @@
     $("chips").appendChild(b);
   });
 
-  function todayCount(logs) { return logs.filter((l) => l.date === today).length; }
-
-  function showTodayHint() {
-    const n = todayCount(loadLogs());
-    if (!n) return;
-    $("hint").className = "hint ok";
-    $("hint").textContent = "오늘 벌써 " + n + "번 기록했어! 또 공부하면 또 남겨 줘.";
+  // 기록은 하루에 한 번만: 오늘 기록이 있으면 칸을 잠근다
+  function lockToday() {
+    const t = loadLogs().filter((l) => l.date === today).pop();
+    if (!t) return false;
+    $("mood").value = t.mood;
+    $("mood").disabled = true;
+    document.querySelectorAll(".chip").forEach((c) => {
+      c.setAttribute("aria-pressed", t.subjects.includes(c.textContent) ? "true" : "false");
+      c.disabled = true;
+    });
+    const go = document.querySelector(".go");
+    go.disabled = true;
+    go.textContent = "오늘 기록 완료 ✅";
+    return true;
   }
 
   function renderBoard(popIndex) {
     const logs = loadLogs();
-    $("count").textContent = logs.length ? "지금까지 스티커 " + logs.length + "개! 🎉" : "기록할 때마다 스티커가 하나씩 붙어!";
+    $("count").textContent = logs.length ? "지금까지 스티커 " + logs.length + "개! 🎉" : "하루에 한 번 기록하면 스티커가 하나씩 붙어!";
     $("logs").innerHTML = "";
     if (!logs.length) {
       const p = document.createElement("li");
@@ -317,17 +329,20 @@
     if (!subjects.length) { hint.className = "hint err"; hint.textContent = "공부한 과목을 하나 이상 골라 줘!"; return; }
     if (!mood) { hint.className = "hint err"; hint.textContent = "기분을 한 단어로 적어 줘!"; $("mood").focus(); return; }
     const logs = loadLogs();
+    if (logs.some((l) => l.date === today)) { lockToday(); return; }
     logs.push({ date: today, time: nowTime(), subjects, mood });
     if (!saveLogs(logs)) { hint.className = "hint err"; hint.textContent = "이 브라우저에서는 저장이 안 돼. 다른 브라우저로 열어 줄래?"; return; }
     const i = logs.length - 1;
+    lockToday();
     hint.className = "hint ok";
-    hint.textContent = "잘했어 " + NICKNAME + "야! 스티커 하나 붙였어 " + stickerFor(i) + " (오늘 " + todayCount(logs) + "번째)";
-    document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", "false"));
-    $("mood").value = "";
+    hint.textContent = "잘했어 " + NICKNAME + "야! 스티커 하나 붙였어 " + stickerFor(i) + " 내일 또 만나!";
     renderBoard(i);
   });
 
-  showTodayHint();
+  if (lockToday()) {
+    $("hint").className = "hint ok";
+    $("hint").textContent = "오늘 기록은 끝! 내일 또 한 칸 채우자 ✨";
+  }
   renderBoard();
 </script>
 </body>
