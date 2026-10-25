@@ -115,6 +115,8 @@
     box-shadow: 0 5px 0 #2aa686; cursor: pointer;
   }
   .go:active { transform: translateY(3px); box-shadow: 0 2px 0 #2aa686; }
+  .go:disabled { background: #b9e9db; box-shadow: none; transform: none; cursor: default; }
+  .chip:disabled, .mood:disabled { opacity: .75; cursor: default; }
   .hint { color: var(--soft); font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
   .hint.ok { color: var(--mint); font-family: "Jua", sans-serif; font-size: 16px; }
   .hint.err { color: var(--pink); }
@@ -264,13 +266,20 @@
     $("chips").appendChild(b);
   });
 
-  function fillToday() {
+  // 기록은 하루에 한 번만: 오늘 기록이 있으면 칸을 잠근다
+  function lockToday() {
     const t = loadLogs()[today];
-    if (!t) return;
+    if (!t) return false;
     $("mood").value = t.mood;
-    document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", t.subjects.includes(c.textContent) ? "true" : "false"));
-    $("hint").className = "hint ok";
-    $("hint").textContent = "오늘 기록 완료! 바꾸고 싶으면 고치고 다시 눌러도 돼.";
+    $("mood").disabled = true;
+    document.querySelectorAll(".chip").forEach((c) => {
+      c.setAttribute("aria-pressed", t.subjects.includes(c.textContent) ? "true" : "false");
+      c.disabled = true;
+    });
+    const go = document.querySelector(".go");
+    go.disabled = true;
+    go.textContent = "오늘 기록 완료 ✅";
+    return true;
   }
 
   function renderBoard(popDate) {
@@ -313,15 +322,19 @@
     if (!subjects.length) { hint.className = "hint err"; hint.textContent = "공부한 과목을 하나 이상 골라 줘!"; return; }
     if (!mood) { hint.className = "hint err"; hint.textContent = "기분을 한 단어로 적어 줘!"; $("mood").focus(); return; }
     const logs = loadLogs();
-    const isNew = !logs[today];
+    if (logs[today]) { lockToday(); return; }
     logs[today] = { subjects, mood };
     if (!saveLogs(logs)) { hint.className = "hint err"; hint.textContent = "이 브라우저에서는 저장이 안 돼. 다른 브라우저로 열어 줄래?"; return; }
+    lockToday();
     hint.className = "hint ok";
-    hint.textContent = isNew ? "잘했어 " + NICKNAME + "야! 스티커 하나 붙였어 " + stickerFor(today) : "오늘 기록을 고쳤어!";
-    renderBoard(isNew ? today : null);
+    hint.textContent = "잘했어 " + NICKNAME + "야! 스티커 하나 붙였어 " + stickerFor(today) + " 내일 또 만나!";
+    renderBoard(today);
   });
 
-  fillToday();
+  if (lockToday()) {
+    $("hint").className = "hint ok";
+    $("hint").textContent = "오늘 기록은 끝! 내일 또 한 칸 채우자 ✨";
+  }
   renderBoard();
 </script>
 </body>
