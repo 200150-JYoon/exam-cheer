@@ -115,25 +115,23 @@
     box-shadow: 0 5px 0 #2aa686; cursor: pointer;
   }
   .go:active { transform: translateY(3px); box-shadow: 0 2px 0 #2aa686; }
-  .go:disabled { background: #b9e9db; box-shadow: none; transform: none; cursor: default; }
-  .chip:disabled, .mood:disabled { opacity: .75; cursor: default; }
   .hint { color: var(--soft); font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
   .hint.ok { color: var(--mint); font-family: "Jua", sans-serif; font-size: 16px; }
   .hint.err { color: var(--pink); }
 
-  .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
-  .slot {
-    aspect-ratio: 1; border-radius: 14px;
-    border: 2px dashed var(--line);
-    display: grid; place-items: center; font-size: 28px;
-  }
-  .slot.on { border: 0; background: var(--sun-soft); }
-  .slot.pop { animation: pop .5s ease; }
-  @keyframes pop { 0% { transform: scale(.2); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
   .count { font-family: "Jua", sans-serif; text-align: center; margin: 0 0 12px; }
-  .logs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .logs li { padding: 10px 12px; border-radius: 12px; background: var(--bg); font-size: 15px; }
-  .logs b { font-family: "Jua", sans-serif; font-weight: 400; margin-right: 6px; }
+  .logs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .log { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 16px; background: var(--bg); }
+  .log .stk {
+    flex: none; width: 52px; height: 52px; border-radius: 14px;
+    background: var(--sun-soft); display: grid; place-items: center; font-size: 30px;
+  }
+  .log.pop .stk { animation: pop .5s ease; }
+  @keyframes pop { 0% { transform: scale(.2); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .log .txt { min-width: 0; }
+  .log .when { font-family: "Jua", sans-serif; font-size: 15px; color: var(--soft); }
+  .log .what { font-size: 16px; word-break: keep-all; }
+  .log .feel { display: inline-block; margin-top: 2px; padding: 1px 10px; border-radius: 999px; background: var(--pink-soft); font-size: 14px; }
   .empty { color: var(--soft); text-align: center; margin: 0; }
 
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
@@ -178,7 +176,6 @@
   <section class="card">
     <h2>🌟 칭찬 스티커판</h2>
     <p class="count" id="count"></p>
-    <div class="board" id="board"></div>
     <ul class="logs" id="logs"></ul>
   </section>
 
@@ -281,17 +278,7 @@
 
   function renderBoard(popIndex) {
     const logs = loadLogs();
-    const slots = Math.max(10, Math.ceil(logs.length / 5) * 5);
     $("count").textContent = logs.length ? "지금까지 스티커 " + logs.length + "개! 🎉" : "기록할 때마다 스티커가 하나씩 붙어!";
-    $("board").innerHTML = "";
-    for (let i = 0; i < slots; i++) {
-      const l = logs[i];
-      const el = document.createElement("div");
-      el.className = "slot" + (l ? " on" : "") + (l && i === popIndex ? " pop" : "");
-      el.textContent = l ? stickerFor(i) : "";
-      if (l) el.title = label(l.date) + (l.time ? " " + l.time : "");
-      $("board").appendChild(el);
-    }
     $("logs").innerHTML = "";
     if (!logs.length) {
       const p = document.createElement("li");
@@ -300,13 +287,16 @@
       $("logs").appendChild(p);
       return;
     }
+    // 새 기록이 맨 위, 스티커 옆에 그때 남긴 기록
     for (let i = logs.length - 1; i >= 0; i--) {
       const l = logs[i];
       const li = document.createElement("li");
-      const b = document.createElement("b");
-      b.textContent = stickerFor(i) + " " + label(l.date) + (l.time ? " " + l.time : "");
-      li.appendChild(b);
-      li.appendChild(document.createTextNode(l.subjects.join(", ") + " · 기분 “" + l.mood + "”"));
+      li.className = "log" + (i === popIndex ? " pop" : "");
+      li.innerHTML = '<span class="stk" aria-hidden="true"></span><div class="txt"><div class="when"></div><div class="what"></div><span class="feel"></span></div>';
+      li.querySelector(".stk").textContent = stickerFor(i);
+      li.querySelector(".when").textContent = label(l.date) + (l.time ? " " + l.time : "");
+      li.querySelector(".what").textContent = l.subjects.join(", ");
+      li.querySelector(".feel").textContent = "기분 · " + l.mood;
       $("logs").appendChild(li);
     }
   }
